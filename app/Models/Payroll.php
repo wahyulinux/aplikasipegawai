@@ -10,9 +10,16 @@ class Payroll extends Model
 {
     use HasFactory;
 
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
+
     protected $fillable = [
         'employee_id',
         'bulan',
+        'status',
+        'approved_at',
+        'verification_code',
         'gaji_pokok',
         'tunjangan_jabatan',
         'uang_makan',
@@ -28,8 +35,16 @@ class Payroll extends Model
         'potongan_pinjaman',
     ];
 
+    protected $casts = [
+        'approved_at' => 'datetime',
+    ];
+
     protected static function booted()
     {
+        static::creating(function ($payroll) {
+            $payroll->status = self::STATUS_PENDING;
+        });
+
         static::saving(function ($payroll) {
             // Hitung Total Penghasilan
             $payroll->total_penghasilan = 
@@ -52,6 +67,12 @@ class Payroll extends Model
 
             // Hitung Gaji Bersih
             $payroll->gaji_bersih = $payroll->total_penghasilan - $payroll->total_potongan;
+            
+            // Generate Verification Code if approved and not yet generated
+            if ($payroll->status === self::STATUS_APPROVED && !$payroll->verification_code) {
+                $payroll->verification_code = 'PAY-' . strtoupper(bin2hex(random_bytes(8)));
+                $payroll->approved_at = now();
+            }
         });
     }
 

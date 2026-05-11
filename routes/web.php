@@ -9,4 +9,5 @@ Route::get('/', function () {
 });
 
 Route::resource('employees', EmployeeController::class);
-Route::resource('payrolls', PayrollController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+Route::resource('payrolls', PayrollController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
+Route::patch('payrolls/{payroll}/approve', [PayrollController::class, 'approve'])->name('payrolls.approve');

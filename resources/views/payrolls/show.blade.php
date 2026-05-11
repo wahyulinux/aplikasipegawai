@@ -67,7 +67,31 @@
         </div>
     </div>
 
-    <div class="mt-10 text-center text-xs text-gray-400 italic">
+    <!-- Digital Signature & Approval -->
+    <div class="mt-12 flex justify-between items-end">
+        <div class="text-center">
+            <p class="text-xs text-gray-500 uppercase font-bold mb-2">Digital Signature</p>
+            @if($payroll->status === 'approved')
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode(route('payrolls.show', $payroll->id) . '?verify=' . $payroll->verification_code) }}" alt="QR Code Signature" class="mx-auto border p-1 bg-white">
+                <p class="text-[10px] text-gray-400 mt-1 font-mono">{{ $payroll->verification_code }}</p>
+            @else
+                <div class="w-[100px] h-[100px] border-2 border-dashed border-gray-200 flex items-center justify-center mx-auto">
+                    <span class="text-[10px] text-gray-300 italic">BELUM DISETUJUI</span>
+                </div>
+            @endif
+        </div>
+        <div class="text-center w-48">
+            <p class="text-xs font-bold text-gray-700 mb-16">HRD Manager,</p>
+            @if($payroll->status === 'approved')
+                <p class="text-sm font-bold text-gray-800 border-b border-gray-800 pb-1">SISTEM TERVERIFIKASI</p>
+                <p class="text-[10px] text-gray-500 italic mt-1">Disetujui pada: {{ $payroll->approved_at->format('d/m/Y H:i') }}</p>
+            @else
+                <p class="text-sm font-bold text-gray-300 border-b border-gray-300 pb-1 italic">( Belum Disetujui )</p>
+            @endif
+        </div>
+    </div>
+
+    <div class="mt-10 text-center text-xs text-gray-400 italic border-t pt-4">
         Slip gaji ini digenerate secara otomatis oleh Sistem Penggajian Pegawai.
     </div>
 </div>

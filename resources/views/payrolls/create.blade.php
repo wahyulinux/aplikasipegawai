@@ -30,43 +30,43 @@
                 <h3 class="text-lg font-bold text-green-600 border-b pb-2">Penghasilan</h3>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Gaji Pokok</label>
-                    <input type="number" name="gaji_pokok" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="gaji_pokok" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Tunjangan Jabatan</label>
-                    <input type="number" name="tunjangan_jabatan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="tunjangan_jabatan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Makan</label>
-                    <input type="number" name="uang_makan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_makan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Kinerja</label>
-                    <input type="number" name="uang_kinerja" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_kinerja" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang PSB</label>
-                    <input type="number" name="uang_psb" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_psb" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Kerajinan</label>
-                    <input type="number" name="uang_kerajinan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_kerajinan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Extra Fooding</label>
-                    <input type="number" name="uang_extra_fooding" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_extra_fooding" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Insentif Narik Jalur</label>
-                    <input type="number" name="insentif_narik_jalur" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="insentif_narik_jalur" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Lembur</label>
-                    <input type="number" name="uang_lembur" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_lembur" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Piket</label>
-                    <input type="number" name="uang_piket" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_piket" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
             </div>
 
@@ -75,15 +75,15 @@
                 <h3 class="text-lg font-bold text-red-600 border-b pb-2">Potongan</h3>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Potongan Kinerja</label>
-                    <input type="number" name="potongan_kinerja" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
+                    <input type="number" step="1" name="potongan_kinerja" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">BPJS Ketenagakerjaan</label>
-                    <input type="number" name="bpjs_ketenagakerjaan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
+                    <input type="number" step="1" name="bpjs_ketenagakerjaan" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Potongan Pinjaman</label>
-                    <input type="number" name="potongan_pinjaman" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
+                    <input type="number" step="1" name="potongan_pinjaman" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
                 </div>
             </div>
         </div>
