@@ -27,41 +27,45 @@ Aplikasi manajemen penggajian pegawai sederhana yang dibangun dengan Laravel 11 
 
 ## ⚙️ Cara Instalasi
 
-1. **Clone Repository**
-   ```bash
-   git clone <repository-url>
-   cd aplikasipegawai
-   ```
+### 1. Persiapan Awal
+```bash
+git clone <repository-url>
+cd aplikasipegawai
+cp .env.example .env
+docker compose up -d --build
+```
 
-2. **Siapkan Environment**
-   Salin file `.env.example` atau buat file `.env` baru:
-   ```bash
-   cp .env.example .env
-   ```
-   *Pastikan konfigurasi database di `.env` sesuai dengan `docker-compose.yml`.*
+### 2. Setup Laravel Octane (Untuk Worker Mode)
+Aplikasi ini mendukung **FrankenPHP Worker Mode** melalui Laravel Octane untuk performa maksimal.
+```bash
+docker compose exec app composer require laravel/octane
+docker compose exec app php artisan octane:install --server=frankenphp
+```
 
-3. **Build dan Jalankan Docker**
-   ```bash
-   docker compose up -d --build
-   ```
+---
 
-4. **Instal Dependencies Laravel**
-   ```bash
-   docker compose exec app composer install
-   ```
+## 🛠 Menjalankan Aplikasi
 
-5. **Generate Application Key**
-   ```bash
-   docker compose exec app php artisan key:generate
-   ```
+### A. Mode Development (Standar)
+Cocok untuk pengembangan. Perubahan kode langsung terlihat tanpa build ulang.
+```bash
+docker compose up -d
+```
+Akses: `http://localhost:8000`
 
-6. **Jalankan Migrasi Database**
-   ```bash
-   docker compose exec app php artisan migrate
-   ```
+### B. Mode Production (Worker Mode)
+Menggunakan **FrankenPHP Worker Mode** via Laravel Octane. Performa sangat tinggi dan efisien.
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+Akses: `http://localhost` (Port 80)
 
-7. **Akses Aplikasi**
-   Buka browser dan akses: `http://localhost:8000`
+---
+
+## 📦 Perintah Penting Lainnya
+- **Migrasi Database:** `docker compose exec app php artisan migrate`
+- **Tinker (CLI):** `docker compose exec app php artisan tinker`
+- **Reset Database:** `docker compose exec app php artisan migrate:fresh`
 
 ## 🐳 Struktur Docker
 

@@ -1,0 +1,54 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: aplikasipegawai-prod-app
+    container_name: aplikasipegawai-prod-app
+    restart: always
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+    ports:
+      - "80:80"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - payroll-network
+
+  db:
+    image: mysql:8.0
+    container_name: aplikasipegawai-prod-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: aplikasipegawai
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: admin
+    volumes:
+      - dbdata_prod:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - payroll-network
+
+  redis:
+    image: redis:alpine
+    container_name: aplikasipegawai-prod-redis
+    restart: always
+    networks:
+      - payroll-network
+
+networks:
+  payroll-network:
+    driver: bridge
+
+volumes:
+  dbdata_prod:
+    driver: local
