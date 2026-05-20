@@ -12,10 +12,12 @@ RUN apt-get update && apt-get install -y \
 # Install PHP extensions
 RUN install-php-extensions \
     pdo_mysql \
+    pdo_pgsql \
     zip \
     intl \
     opcache \
-    redis
+    redis \
+    gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

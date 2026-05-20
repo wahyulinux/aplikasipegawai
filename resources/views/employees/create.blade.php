@@ -14,9 +14,17 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">Nama</label>
             <input type="text" name="nama" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
         </div>
-        <div class="mb-6">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+            <input type="email" name="email" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Jabatan</label>
             <input type="text" name="jabatan" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Nomor Rekening</label>
+            <input type="text" name="nomor_rekening" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <div class="flex items-center justify-between">
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold">Simpan</button>

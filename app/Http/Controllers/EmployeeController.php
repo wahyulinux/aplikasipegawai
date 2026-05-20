@@ -23,7 +23,9 @@ class EmployeeController extends Controller
         $request->validate([
             'nip' => 'required|unique:employees',
             'nama' => 'required',
+            'email' => 'nullable|email',
             'jabatan' => 'required',
+            'nomor_rekening' => 'nullable|string',
         ]);
 
         Employee::create($request->all());
@@ -41,7 +43,9 @@ class EmployeeController extends Controller
         $request->validate([
             'nip' => 'required|unique:employees,nip,' . $employee->id,
             'nama' => 'required',
+            'email' => 'nullable|email',
             'jabatan' => 'required',
+            'nomor_rekening' => 'nullable|string',
         ]);
 
         $employee->update($request->all());

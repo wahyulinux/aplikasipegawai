@@ -3,7 +3,14 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">Data Penggajian</h1>
-    <a href="{{ route('payrolls.create') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Input Gaji Baru</a>
+    <div class="flex space-x-2">
+        <form action="{{ route('payrolls.print_all') }}" method="GET" class="flex items-center space-x-2">
+            <input type="month" name="bulan" class="rounded border-gray-300 text-sm" required>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm font-bold">Cetak Masal</button>
+            <button type="submit" formaction="{{ route('payrolls.export_excel') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm font-bold">Export Excel Payroll BRI</button>
+        </form>
+        <a href="{{ route('payrolls.create') }}" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 text-sm font-bold">Input Gaji Baru</a>
+    </div>
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">

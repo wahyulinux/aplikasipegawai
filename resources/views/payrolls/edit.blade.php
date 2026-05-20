@@ -84,6 +84,10 @@
                     <input type="number" step="1" name="bpjs_ketenagakerjaan" value="{{ (int)$payroll->bpjs_ketenagakerjaan }}" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
                 </div>
                 <div>
+                    <label class="block text-gray-700 text-xs font-bold mb-1">BPJS Kesehatan</label>
+                    <input type="number" step="1" name="bpjs_kesehatan" value="{{ (int)$payroll->bpjs_kesehatan }}" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
+                </div>
+                <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Potongan Pinjaman</label>
                     <input type="number" step="1" name="potongan_pinjaman" value="{{ (int)$payroll->potongan_pinjaman }}" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
                 </div>

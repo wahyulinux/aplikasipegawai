@@ -23,19 +23,18 @@ services:
       - payroll-network
 
   db:
-    image: mysql:8.0
+    image: postgres:15-alpine
     container_name: aplikasipegawai-db
     restart: unless-stopped
     tty: true
     environment:
-      MYSQL_DATABASE: aplikasipegawai
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_PASSWORD: root
-      MYSQL_USER: admin
+      POSTGRES_DB: aplikasipegawai
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
     volumes:
-      - dbdata:/var/lib/mysql
+      - dbdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-proot"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d aplikasipegawai"]
       interval: 10s
       timeout: 5s
       retries: 5

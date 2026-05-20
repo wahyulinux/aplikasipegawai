@@ -11,6 +11,9 @@
         <div>
             <p class="text-gray-500 uppercase tracking-wider font-bold text-xs">Nama Pegawai</p>
             <p class="text-lg font-bold text-gray-800">{{ $payroll->employee->nama }}</p>
+            @if($payroll->employee->nomor_rekening)
+                <p class="text-xs text-gray-500 mt-1">Rek: <span class="font-mono text-gray-700">{{ $payroll->employee->nomor_rekening }}</span></p>
+            @endif
         </div>
         <div class="text-right">
             <p class="text-gray-500 uppercase tracking-wider font-bold text-xs">NIP</p>
@@ -46,6 +49,7 @@
             <ul class="space-y-2 text-sm text-gray-700">
                 <li class="flex justify-between"><span>Pot. Kinerja</span> <span>{{ number_format($payroll->potongan_kinerja, 0, ',', '.') }}</span></li>
                 <li class="flex justify-between"><span>BPJS Ket.</span> <span>{{ number_format($payroll->bpjs_ketenagakerjaan, 0, ',', '.') }}</span></li>
+                <li class="flex justify-between"><span>BPJS Kes.</span> <span>{{ number_format($payroll->bpjs_kesehatan, 0, ',', '.') }}</span></li>
                 <li class="flex justify-between"><span>Pot. Pinjaman</span> <span>{{ number_format($payroll->potongan_pinjaman, 0, ',', '.') }}</span></li>
             </ul>
         </div>

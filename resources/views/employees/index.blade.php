@@ -12,7 +12,9 @@
             <tr>
                 <th class="py-3 px-6 text-left">NIP</th>
                 <th class="py-3 px-6 text-left">Nama</th>
+                <th class="py-3 px-6 text-left">Email</th>
                 <th class="py-3 px-6 text-left">Jabatan</th>
+                <th class="py-3 px-6 text-left">No. Rekening</th>
                 <th class="py-3 px-6 text-center">Aksi</th>
             </tr>
         </thead>
@@ -21,7 +23,9 @@
             <tr class="border-b border-gray-200 hover:bg-gray-100">
                 <td class="py-3 px-6 text-left font-medium">{{ $employee->nip }}</td>
                 <td class="py-3 px-6 text-left">{{ $employee->nama }}</td>
+                <td class="py-3 px-6 text-left">{{ $employee->email ?? '-' }}</td>
                 <td class="py-3 px-6 text-left">{{ $employee->jabatan }}</td>
+                <td class="py-3 px-6 text-left">{{ $employee->nomor_rekening ?? '-' }}</td>
                 <td class="py-3 px-6 text-center space-x-2">
                     <a href="{{ route('employees.edit', $employee->id) }}" class="text-blue-500 hover:underline">Edit</a>
                     <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="inline">

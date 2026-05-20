@@ -32,6 +32,7 @@ class Payroll extends Model
         'uang_piket',
         'potongan_kinerja',
         'bpjs_ketenagakerjaan',
+        'bpjs_kesehatan',
         'potongan_pinjaman',
     ];
 
@@ -63,6 +64,7 @@ class Payroll extends Model
             $payroll->total_potongan = 
                 $payroll->potongan_kinerja +
                 $payroll->bpjs_ketenagakerjaan +
+                $payroll->bpjs_kesehatan +
                 $payroll->potongan_pinjaman;
 
             // Hitung Gaji Bersih

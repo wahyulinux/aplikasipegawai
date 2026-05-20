@@ -13,7 +13,9 @@ class Employee extends Model
     protected $fillable = [
         'nip',
         'nama',
+        'email',
         'jabatan',
+        'nomor_rekening',
     ];
 
     public function payrolls(): HasMany
