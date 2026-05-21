@@ -85,7 +85,7 @@
             @endif
         </div>
         <div class="text-center w-48">
-            <p class="text-xs font-bold text-gray-700 mb-16">HRD Manager,</p>
+            <p class="text-xs font-bold text-gray-700 mb-16">{{ $payroll->approver ? $payroll->approver->name : 'HRD Manager' }},</p>
             @if($payroll->status === 'approved')
                 <p class="text-sm font-bold text-gray-800 border-b border-gray-800 pb-1">SISTEM TERVERIFIKASI</p>
                 <p class="text-[10px] text-gray-500 italic mt-1">Disetujui pada: {{ $payroll->approved_at->format('d/m/Y H:i') }}</p>

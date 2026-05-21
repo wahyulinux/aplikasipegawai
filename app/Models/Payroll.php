@@ -18,6 +18,7 @@ class Payroll extends Model
         'employee_id',
         'bulan',
         'status',
+        'approved_by',
         'approved_at',
         'verification_code',
         'gaji_pokok',
@@ -81,5 +82,10 @@ class Payroll extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

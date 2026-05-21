@@ -18,6 +18,16 @@ class Employee extends Model
         'nomor_rekening',
     ];
 
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
+
     public function payrolls(): HasMany
     {
         return $this->hasMany(Payroll::class);

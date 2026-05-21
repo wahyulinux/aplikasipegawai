@@ -3,7 +3,9 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">Data Pegawai</h1>
-    <a href="{{ route('employees.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Tambah Pegawai</a>
+    @if(Auth::user()->role === 'staff')
+        <a href="{{ route('employees.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold">Tambah Pegawai</a>
+    @endif
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -25,14 +27,18 @@
                 <td class="py-3 px-6 text-left">{{ $employee->nama }}</td>
                 <td class="py-3 px-6 text-left">{{ $employee->email ?? '-' }}</td>
                 <td class="py-3 px-6 text-left">{{ $employee->jabatan }}</td>
-                <td class="py-3 px-6 text-left">{{ $employee->nomor_rekening ?? '-' }}</td>
+                <td class="py-3 px-6 text-left font-mono">{{ $employee->nomor_rekening ?? '-' }}</td>
                 <td class="py-3 px-6 text-center space-x-2">
-                    <a href="{{ route('employees.edit', $employee->id) }}" class="text-blue-500 hover:underline">Edit</a>
-                    <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-500 hover:underline" onclick="return confirm('Hapus pegawai ini?')">Hapus</button>
-                    </form>
+                    @if(Auth::user()->role === 'staff')
+                        <a href="{{ route('employees.edit', $employee->id) }}" class="text-yellow-600 hover:underline font-bold">Edit</a>
+                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:underline font-bold" onclick="return confirm('Hapus pegawai ini?')">Hapus</button>
+                        </form>
+                    @else
+                        <span class="text-gray-400 italic">No Action</span>
+                    @endif
                 </td>
             </tr>
             @endforeach

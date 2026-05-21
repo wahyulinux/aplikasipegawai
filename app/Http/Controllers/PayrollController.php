@@ -13,9 +13,25 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PayrollController extends Controller
 {
+    public function getLoanDeduction(Employee $employee)
+    {
+        $totalDeduction = $employee->loans()
+            ->where('status', \App\Models\Loan::STATUS_APPROVED)
+            ->sum('nominal_cicilan');
+
+        return response()->json(['total_deduction' => $totalDeduction]);
+    }
+
     public function index()
     {
-        $payrolls = Payroll::with('employee')->latest()->get();
+        $query = Payroll::with('employee')->latest();
+
+        // Jika login sebagai pegawai, hanya tampilkan slip gaji miliknya (semua status)
+        if (auth()->user()->role === 'pegawai') {
+            $query->where('employee_id', auth()->user()->employee_id);
+        }
+
+        $payrolls = $query->get();
         return view('payrolls.index', compact('payrolls'));
     }
 
@@ -93,6 +109,13 @@ class PayrollController extends Controller
 
     public function show(Payroll $payroll)
     {
+        // Proteksi: Pegawai hanya boleh melihat slip gajinya sendiri
+        if (auth()->user()->role === 'pegawai') {
+            if ($payroll->employee_id !== auth()->user()->employee_id) {
+                abort(403, 'Anda tidak memiliki akses untuk melihat slip gaji ini.');
+            }
+        }
+
         return view('payrolls.show', compact('payroll'));
     }
 
@@ -114,8 +137,40 @@ class PayrollController extends Controller
 
     public function approve(Payroll $payroll)
     {
-        $payroll->update(['status' => Payroll::STATUS_APPROVED]);
-        return redirect()->back()->with('success', 'Payroll berhasil disetujui oleh HRD');
+        $payroll->update([
+            'status' => Payroll::STATUS_APPROVED,
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
+        ]);
+
+        // Logic Pinjaman: Kurangi sisa pinjaman jika ada potongan_pinjaman di slip ini
+        if ($payroll->potongan_pinjaman > 0) {
+            $remainingDeduction = $payroll->potongan_pinjaman;
+            
+            // Ambil semua pinjaman aktif (APPROVED) milik pegawai ini, urutkan dari yang terlama
+            $activeLoans = $payroll->employee->loans()
+                ->where('status', \App\Models\Loan::STATUS_APPROVED)
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            foreach ($activeLoans as $loan) {
+                if ($remainingDeduction <= 0) break;
+
+                // Tentukan berapa yang bisa dikurangi dari pinjaman ini
+                // Biasanya sebesar nominal_cicilan, tapi kita pastikan tidak melebihi sisa_pinjaman
+                $amountToSubtract = min($loan->nominal_cicilan, $loan->sisa_pinjaman, $remainingDeduction);
+
+                $newBalance = $loan->sisa_pinjaman - $amountToSubtract;
+                $loan->update([
+                    'sisa_pinjaman' => $newBalance,
+                    'status' => $newBalance <= 0 ? \App\Models\Loan::STATUS_LUNAS : \App\Models\Loan::STATUS_APPROVED
+                ]);
+
+                $remainingDeduction -= $amountToSubtract;
+            }
+        }
+
+        return redirect()->back()->with('success', 'Payroll berhasil disetujui dan saldo pinjaman pegawai telah diperbarui');
     }
 
     public function destroy(Payroll $payroll)

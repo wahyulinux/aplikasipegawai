@@ -12,7 +12,7 @@
             <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded border">
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Pilih Pegawai</label>
-                    <select name="employee_id" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <select name="employee_id" id="employee_select" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                         <option value="">-- Pilih Pegawai --</option>
                         @foreach($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->nama }} ({{ $employee->jabatan }})</option>
@@ -87,7 +87,8 @@
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Potongan Pinjaman</label>
-                    <input type="number" step="1" name="potongan_pinjaman" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500">
+                    <input type="number" step="1" name="potongan_pinjaman" id="potongan_pinjaman" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-red-500 bg-gray-50 font-bold" readonly>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">*Terisi otomatis dari data pinjaman aktif.</p>
                 </div>
             </div>
         </div>
@@ -98,4 +99,19 @@
         </div>
     </form>
 </div>
+
+<script>
+document.getElementById('employee_select').addEventListener('change', function() {
+    const employeeId = this.value;
+    if (employeeId) {
+        fetch(`/payrolls/loan-deduction/${employeeId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('potongan_pinjaman').value = Math.round(data.total_deduction);
+            });
+    } else {
+        document.getElementById('potongan_pinjaman').value = 0;
+    }
+});
+</script>
 @endsection
