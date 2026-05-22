@@ -3,11 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
+use App\Models\User;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
+    protected $telegram;
+
+    public function __construct(TelegramService $telegram)
+    {
+        $this->telegram = $telegram;
+    }
+
     public function index()
     {
         $query = Loan::with('employee')->latest();
@@ -51,7 +60,7 @@ class LoanController extends Controller
 
         $nominal_cicilan = $request->nominal_pinjaman / $request->tenor_bulan;
 
-        Loan::create([
+        $loan = Loan::create([
             'employee_id' => Auth::user()->employee_id,
             'nominal_pinjaman' => $request->nominal_pinjaman,
             'tenor_bulan' => $request->tenor_bulan,
@@ -60,6 +69,20 @@ class LoanController extends Controller
             'keterangan' => $request->keterangan,
             'status' => Loan::STATUS_PENDING,
         ]);
+
+        // Notifikasi ke Finance: Pengajuan Pinjaman Baru
+        $finances = User::where('role', User::ROLE_FINANCE)->where('is_active', true)->get();
+        $message = "💰 *Pengajuan Kasbon Baru*\n\n"
+                 . "Halo Finance, ada pengajuan pinjaman baru dari *" . Auth::user()->name . "*.\n"
+                 . "Nominal: *Rp " . number_format($request->nominal_pinjaman, 0, ',', '.') . "*\n"
+                 . "Tenor: *{$request->tenor_bulan} Bulan*\n\n"
+                 . "Silakan login untuk memproses.";
+
+        foreach ($finances as $finance) {
+            if ($finance->telegram_chat_id) {
+                $this->telegram->sendMessage($finance->telegram_chat_id, $message);
+            }
+        }
 
         return redirect()->route('loans.index')->with('success', 'Pengajuan pinjaman berhasil dikirim.');
     }
@@ -79,6 +102,13 @@ class LoanController extends Controller
             'approved_by' => Auth::id(),
             'approved_at' => now(),
         ]);
+
+        // Notifikasi ke Pegawai: Pinjaman Disetujui
+        if ($loan->employee->telegram_chat_id) {
+            $message = "✅ *Kasbon Disetujui!*\n\n"
+                     . "Halo *{$loan->employee->nama}*, pengajuan pinjaman Anda senilai *Rp " . number_format($loan->nominal_pinjaman, 0, ',', '.') . "* telah disetujui oleh Finance dan sedang diproses cair.";
+            $this->telegram->sendMessage($loan->employee->telegram_chat_id, $message);
+        }
 
         return back()->with('success', 'Pinjaman berhasil disetujui.');
     }

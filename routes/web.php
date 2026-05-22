@@ -5,11 +5,16 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\SocialAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Google SSO Routes
+Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
 Route::middleware('auth')->group(function () {
     // Menu Ganti Password

@@ -16,6 +16,7 @@ class Employee extends Model
         'email',
         'jabatan',
         'nomor_rekening',
+        'telegram_chat_id',
     ];
 
     public function user()

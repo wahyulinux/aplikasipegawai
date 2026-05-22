@@ -10,9 +10,18 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Services\TelegramService;
+use App\Models\User;
 
 class PayrollController extends Controller
 {
+    protected $telegram;
+
+    public function __construct(TelegramService $telegram)
+    {
+        $this->telegram = $telegram;
+    }
+
     public function getLoanDeduction(Employee $employee)
     {
         $totalDeduction = $employee->loans()
@@ -62,7 +71,20 @@ class PayrollController extends Controller
             'potongan_pinjaman' => 'nullable|numeric',
         ]);
 
-        Payroll::create($data);
+        $payroll = Payroll::create($data);
+
+        // Notifikasi ke HRD: Draft Gaji Baru
+        $hrds = User::where('role', User::ROLE_HRD)->where('is_active', true)->get();
+        $message = "📄 *Draft Gaji Baru Memerlukan Persetujuan*\n\n"
+                 . "Halo HRD, draft slip gaji untuk pegawai *{$payroll->employee->nama}* periode *{$payroll->bulan}* telah dibuat oleh Staff.\n\n"
+                 . "Total THP: *Rp " . number_format($payroll->gaji_bersih, 0, ',', '.') . "*\n"
+                 . "Silakan login ke aplikasi untuk mereview.";
+
+        foreach ($hrds as $hrd) {
+            if ($hrd->telegram_chat_id) {
+                $this->telegram->sendMessage($hrd->telegram_chat_id, $message);
+            }
+        }
 
         return redirect()->route('payrolls.index')->with('success', 'Payroll berhasil disimpan');
     }
@@ -177,6 +199,14 @@ class PayrollController extends Controller
             'approved_by' => auth()->id(),
             'approved_at' => now(),
         ]);
+
+        // Notifikasi ke Pegawai: Gaji Disetujui
+        if ($payroll->employee->telegram_chat_id) {
+            $message = "💰 *Slip Gaji Tersedia!*\n\n"
+                     . "Halo *{$payroll->employee->nama}*, slip gaji Anda untuk periode *{$payroll->bulan}* telah diterbitkan dan disetujui.\n\n"
+                     . "Silakan cek dan konfirmasi penerimaan di aplikasi Payroll.";
+            $this->telegram->sendMessage($payroll->employee->telegram_chat_id, $message);
+        }
 
         // Logic Pinjaman: Kurangi sisa pinjaman jika ada potongan_pinjaman di slip ini
         if ($payroll->potongan_pinjaman > 0) {

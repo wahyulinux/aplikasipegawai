@@ -27,6 +27,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'telegram_chat_id' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
             'role' => ['required', Rule::in([User::ROLE_SUPERADMIN, User::ROLE_STAFF, User::ROLE_HRD, User::ROLE_FINANCE])],
         ]);
@@ -34,6 +35,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'telegram_chat_id' => $request->telegram_chat_id,
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'is_active' => true,
@@ -60,6 +62,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'telegram_chat_id' => 'nullable|string',
             'password' => 'nullable|string|min:8|confirmed',
             'role' => ['required', Rule::in([User::ROLE_SUPERADMIN, User::ROLE_STAFF, User::ROLE_HRD, User::ROLE_FINANCE])],
         ]);
@@ -67,6 +70,7 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'telegram_chat_id' => $request->telegram_chat_id,
             'role' => $request->role,
         ];
 

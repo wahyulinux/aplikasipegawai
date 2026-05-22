@@ -51,6 +51,24 @@
                         </button>
                     </div>
                 </form>
+
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500 font-medium italic">Atau</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <a href="{{ route('auth.google') }}" class="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-bold text-gray-700 hover:bg-gray-50 transition duration-150">
+                            <img class="h-5 w-5 mr-2" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+                            <span>Masuk dengan Google</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
