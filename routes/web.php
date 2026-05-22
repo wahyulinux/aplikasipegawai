@@ -4,6 +4,7 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PasswordController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -11,6 +12,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
+    // Menu Ganti Password
+    Route::get('password/change', [PasswordController::class, 'edit'])->name('password.change');
+    Route::put('password/change', [PasswordController::class, 'update'])->name('password.update');
+
     // Menu Superadmin: Manajemen User Operasional
     Route::middleware('role:superadmin')->group(function () {
         Route::get('users', [UserController::class, 'index'])->name('users.index');
@@ -63,10 +68,17 @@ Route::middleware('auth')->group(function () {
     Route::get('payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
     Route::get('payrolls/export-excel', [PayrollController::class, 'exportExcel'])->name('payrolls.export_excel');
     Route::get('payrolls/print-all', [PayrollController::class, 'printAll'])->name('payrolls.print_all');
-    Route::get('payrolls/{payroll}', [PayrollController::class, 'show'])->name('payrolls.show');
 
     // Menu Payroll (Khusus HRD - Checker)
     Route::patch('payrolls/{payroll}/approve', [PayrollController::class, 'approve'])
         ->middleware('role:hrd')
         ->name('payrolls.approve');
+
+    // Menu Konfirmasi Gaji (Khusus Pegawai)
+    Route::patch('payrolls/{payroll}/acknowledge', [PayrollController::class, 'acknowledge'])
+        ->middleware('role:pegawai')
+        ->name('payrolls.acknowledge');
 });
+
+// Route Publik (Verifikasi QR Code) - HARUS DI PALING BAWAH
+Route::get('payrolls/{payroll}', [PayrollController::class, 'show'])->name('payrolls.show');

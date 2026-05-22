@@ -73,24 +73,52 @@
 
     <!-- Digital Signature & Approval -->
     <div class="mt-12 flex justify-between items-end">
-        <div class="text-center">
-            <p class="text-xs text-gray-500 uppercase font-bold mb-2">Digital Signature</p>
+        <!-- Bagian Konfirmasi Pegawai -->
+        <div class="w-64">
             @if($payroll->status === 'approved')
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode(route('payrolls.show', $payroll->id) . '?verify=' . $payroll->verification_code) }}" alt="QR Code Signature" class="mx-auto border p-1 bg-white">
-                <p class="text-[10px] text-gray-400 mt-1 font-mono">{{ $payroll->verification_code }}</p>
-            @else
-                <div class="w-[100px] h-[100px] border-2 border-dashed border-gray-200 flex items-center justify-center mx-auto">
-                    <span class="text-[10px] text-gray-300 italic">BELUM DISETUJUI</span>
-                </div>
+                @if($payroll->is_acknowledged)
+                    <div class="border-2 border-green-500 rounded-lg p-3 text-center bg-green-50 shadow-sm transform -rotate-2">
+                        <p class="text-xs font-black text-green-700 uppercase tracking-widest mb-1 border-b border-green-200 pb-1">Telah Diterima</p>
+                        <p class="text-[10px] text-green-600 font-bold mb-1">{{ $payroll->employee->nama }}</p>
+                        <p class="text-[9px] text-green-500 italic">Tgl: {{ $payroll->acknowledged_at->format('d/m/Y H:i:s') }}</p>
+                    </div>
+                @else
+                    @if(Auth::user()->role === 'pegawai')
+                        <form action="{{ route('payrolls.acknowledge', $payroll->id) }}" method="POST" class="no-print">
+                            @csrf @method('PATCH')
+                            <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 font-bold shadow-lg transition duration-200 flex flex-col items-center justify-center animate-pulse" onclick="return confirm('Dengan menekan tombol ini, Anda menyatakan bahwa telah menerima gaji sesuai nominal yang tertera pada slip ini.')">
+                                <span class="uppercase tracking-widest text-xs mb-1">Konfirmasi</span>
+                                <span class="text-sm">Terima Gaji</span>
+                            </button>
+                        </form>
+                        <p class="print-only text-xs text-red-500 italic hidden">Menunggu Konfirmasi Pegawai</p>
+                    @else
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center bg-gray-50">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Menunggu Konfirmasi<br>Dari Pegawai</p>
+                        </div>
+                    @endif
+                @endif
             @endif
         </div>
-        <div class="text-center w-48">
-            <p class="text-xs font-bold text-gray-700 mb-16">{{ $payroll->approver ? $payroll->approver->name : 'HRD Manager' }},</p>
+
+        <!-- Bagian HRD -->
+        <div class="text-center w-64 flex flex-col justify-end items-center">
+            <p class="text-xs font-bold text-gray-700 mb-4">Disetujui Oleh,</p>
             @if($payroll->status === 'approved')
-                <p class="text-sm font-bold text-gray-800 border-b border-gray-800 pb-1">SISTEM TERVERIFIKASI</p>
-                <p class="text-[10px] text-gray-500 italic mt-1">Disetujui pada: {{ $payroll->approved_at->format('d/m/Y H:i') }}</p>
+                <div class="mb-4">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode(request()->fullUrl() . '?verify=' . $payroll->verification_code) }}" alt="QR Code Signature" class="mx-auto border p-1 bg-white shadow-sm">
+                    <p class="text-[9px] text-gray-400 mt-1 font-mono tracking-widest">{{ $payroll->verification_code }}</p>
+                </div>
+                <p class="text-sm font-bold text-gray-800 border-b border-gray-800 pb-1 uppercase w-full">
+                    {{ $payroll->approver ? $payroll->approver->name : 'HRD Manager' }}
+                </p>
+                <p class="text-[10px] text-gray-500 italic mt-1">HRD Manager</p>
+                <p class="text-[10px] text-gray-500 italic mt-1">Tgl: {{ $payroll->approved_at->format('d/m/Y H:i') }}</p>
             @else
-                <p class="text-sm font-bold text-gray-300 border-b border-gray-300 pb-1 italic">( Belum Disetujui )</p>
+                <div class="w-[100px] h-[100px] border-2 border-dashed border-gray-200 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-[10px] text-gray-300 italic">BELUM<br>DISETUJUI</span>
+                </div>
+                <p class="text-sm font-bold text-gray-300 border-b border-gray-300 pb-1 uppercase w-full">HRD MANAGER</p>
             @endif
         </div>
     </div>
@@ -108,7 +136,8 @@
 <style>
     @media print {
         body { background: white; }
-        .no-print { display: none; }
+        .no-print { display: none !important; }
+        .print-only { display: block !important; }
         nav { display: none; }
         main { padding: 0; margin: 0; }
         #slip-gaji { box-shadow: none; border: 1px solid #eee; }

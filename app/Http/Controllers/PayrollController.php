@@ -107,8 +107,25 @@ class PayrollController extends Controller
         return redirect()->route('payrolls.index')->with('success', 'Payroll berhasil diperbarui');
     }
 
-    public function show(Payroll $payroll)
+    public function show(Request $request, Payroll $payroll)
     {
+        // Cek apakah ini akses publik melalui scan QR Code
+        $verifyToken = $request->query('verify');
+        if ($verifyToken) {
+            if ($payroll->verification_code === $verifyToken && $payroll->status === Payroll::STATUS_APPROVED) {
+                // Token valid dan slip sudah di-approve, izinkan akses publik
+                return view('payrolls.show', compact('payroll'));
+            } else {
+                // Token tidak valid atau slip belum di-approve
+                abort(403, 'Kode verifikasi tidak valid atau slip gaji belum disetujui.');
+            }
+        }
+
+        // Jika tidak ada token verify, pastikan user sudah login
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         // Proteksi: Pegawai hanya boleh melihat slip gajinya sendiri
         if (auth()->user()->role === 'pegawai') {
             if ($payroll->employee_id !== auth()->user()->employee_id) {
@@ -117,6 +134,24 @@ class PayrollController extends Controller
         }
 
         return view('payrolls.show', compact('payroll'));
+    }
+
+    public function acknowledge(Payroll $payroll)
+    {
+        if (auth()->user()->role !== 'pegawai' || $payroll->employee_id !== auth()->user()->employee_id) {
+            abort(403, 'Anda tidak berhak melakukan aksi ini.');
+        }
+
+        if ($payroll->status !== Payroll::STATUS_APPROVED) {
+            return back()->with('error', 'Hanya slip gaji yang sudah di-approve yang bisa dikonfirmasi.');
+        }
+
+        $payroll->update([
+            'is_acknowledged' => true,
+            'acknowledged_at' => now(),
+        ]);
+
+        return back()->with('success', 'Terima kasih, Anda telah mengonfirmasi penerimaan slip gaji ini.');
     }
 
     public function printAll(Request $request)

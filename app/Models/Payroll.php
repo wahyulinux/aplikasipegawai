@@ -20,6 +20,8 @@ class Payroll extends Model
         'status',
         'approved_by',
         'approved_at',
+        'is_acknowledged',
+        'acknowledged_at',
         'verification_code',
         'gaji_pokok',
         'tunjangan_jabatan',
@@ -39,6 +41,8 @@ class Payroll extends Model
 
     protected $casts = [
         'approved_at' => 'datetime',
+        'acknowledged_at' => 'datetime',
+        'is_acknowledged' => 'boolean',
     ];
 
     protected static function booted()

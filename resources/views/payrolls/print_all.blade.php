@@ -96,27 +96,24 @@
             </div>
 
             <!-- Digital Signature & Approval -->
-            <div class="mt-12 flex justify-between items-end">
-                <div class="text-center">
+            <div class="mt-12 flex justify-end">
+                <div class="text-center w-64 flex flex-col justify-end items-center">
+                    <p class="text-xs font-bold text-gray-700 mb-4">Disetujui Oleh,</p>
                     @if($payroll->status === \App\Models\Payroll::STATUS_APPROVED)
-                        <p class="text-xs text-gray-500 uppercase font-bold mb-2">Digital Signature</p>
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode(route('payrolls.show', $payroll->id) . '?verify=' . $payroll->verification_code) }}" alt="QR Code Signature" class="mx-auto border p-1 bg-white">
-                        <p class="text-[10px] text-gray-400 mt-1 font-mono">{{ $payroll->verification_code }}</p>
-                    @else
-                        <div class="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 w-24 mx-auto">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Belum<br>Disetujui</p>
+                        <div class="mb-4">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode(route('payrolls.show', $payroll->id) . '?verify=' . $payroll->verification_code) }}" alt="QR Code Signature" class="mx-auto border p-1 bg-white shadow-sm">
+                            <p class="text-[9px] text-gray-400 mt-1 font-mono tracking-widest">{{ $payroll->verification_code }}</p>
                         </div>
-                    @endif
-                </div>
-                <div class="text-center w-48">
-                    <p class="text-xs font-bold text-gray-700 mb-16">{{ $payroll->approver ? $payroll->approver->name : 'HRD Manager' }},</p>
-                    <p class="text-sm font-bold text-gray-800 border-b border-gray-800 pb-1">
-                        {{ $payroll->status === \App\Models\Payroll::STATUS_APPROVED ? 'SISTEM TERVERIFIKASI' : 'DRAFT' }}
-                    </p>
-                    @if($payroll->approved_at)
-                        <p class="text-[10px] text-gray-500 italic mt-1">Disetujui pada: {{ $payroll->approved_at->format('d/m/Y H:i') }}</p>
+                        <p class="text-sm font-bold text-gray-800 border-b border-gray-800 pb-1 uppercase w-full">
+                            {{ $payroll->approver ? $payroll->approver->name : 'HRD Manager' }}
+                        </p>
+                        <p class="text-[10px] text-gray-500 italic mt-1">HRD Manager</p>
+                        <p class="text-[10px] text-gray-500 italic mt-1">Tgl: {{ $payroll->approved_at->format('d/m/Y H:i') }}</p>
                     @else
-                        <p class="text-[10px] text-gray-400 italic mt-1">Menunggu Persetujuan</p>
+                        <div class="w-[100px] h-[100px] border-2 border-dashed border-gray-200 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-[10px] text-gray-300 italic">BELUM<br>DISETUJUI</span>
+                        </div>
+                        <p class="text-sm font-bold text-gray-300 border-b border-gray-300 pb-1 uppercase w-full">HRD MANAGER</p>
                     @endif
                 </div>
             </div>
