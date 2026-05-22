@@ -1,76 +1,85 @@
 # Sistem Penggajian Pegawai (Payroll App)
 
-Aplikasi manajemen penggajian pegawai sederhana yang dibangun dengan Laravel 11 dan FrankenPHP. Sistem ini mencakup pengelolaan data pegawai, input komponen gaji yang mendetail, ekspor laporan, serta alur persetujuan HRD dengan tanda tangan digital (QR Code).
+Aplikasi manajemen penggajian pegawai berskala menengah yang dibangun dengan Laravel 11 dan FrankenPHP. Sistem ini dirancang dengan prinsip *Maker-Checker* dan pemisahan tugas (Segregation of Duties) yang ketat melalui sistem multi-role, meliputi pengelolaan gaji, manajemen pinjaman karyawan (kasbon), hingga tanda tangan digital.
 
 ## 🚀 Stack Teknologi
 
 - **Backend:** [Laravel 11](https://laravel.com/) (PHP 8.3)
 - **Application Server:** [FrankenPHP](https://frankenphp.dev/) (Modern PHP server berbasis Caddy)
-- **Database:** PostgreSQL 15 (diubah dari MySQL)
+- **Database:** PostgreSQL 15
 - **Session & Cache:** Redis
-- **Frontend:** Blade Templates + [Tailwind CSS](https://tailwindcss.com/)
-- **Infrastructure:** Docker Compose
+- **Frontend:** Blade Templates + [Tailwind CSS](https://tailwindcss.com/) + Alpine.js
+- **Infrastructure:** Docker & Docker Compose
 - **Excel Handling:** PhpSpreadsheet
+
+## 👥 Sistem Hak Akses (Multi-Role)
+
+Aplikasi ini memiliki 5 tingkat hak akses yang saling terisolasi:
+
+1. **Superadmin:** Akses khusus IT. Hanya bisa mengelola akun operasional (Tambah/Edit/Nonaktifkan Staff, HRD, Finance). Tidak bisa melihat data keuangan.
+2. **Staff (Maker):** Mengelola data master pegawai, menginput pengajuan gaji, dan melakukan perhitungan.
+3. **Finance (Approver Pinjaman):** Menyetujui atau menolak pengajuan pinjaman uang dari pegawai.
+4. **HRD (Approver Gaji):** Melakukan validasi akhir dan menyetujui (Approve) draf gaji yang dibuat oleh Staff.
+5. **Pegawai:** Hanya bisa login untuk mengajukan pinjaman dan melakukan Konfirmasi Penerimaan Gaji pada slip pribadinya.
 
 ## 🛠 Fitur Utama
 
-- **Manajemen Pegawai:** CRUD data identitas pegawai (NIP, Nama, Email, Jabatan, Nomor Rekening).
-- **Komponen Gaji Lengkap:** Mendukung Gaji Pokok, Tunjangan, Uang Makan, Kinerja, PSB, Kerajinan, Extra Fooding, Insentif Jalur, Lembur, dan Piket.
-- **Komponen Potongan:** Mendukung Potongan Kinerja, BPJS Ketenagakerjaan, BPJS Kesehatan, dan Potongan Pinjaman.
-- **Kalkulasi Otomatis:** Sistem otomatis menghitung Total Penghasilan, Total Potongan, dan Gaji Bersih (Take Home Pay).
-- **Approval HRD:** Data gaji terkunci setelah disetujui untuk menjaga integritas data.
-- **Digital Signature:** Slip gaji dilengkapi dengan QR Code unik sebagai verifikasi digital setelah di-approve oleh HRD.
-- **Cetak Slip Gaji:** Fitur cetak slip gaji satuan maupun cetak masal dengan penyesuaian tata letak otomatis. Mendukung pencetakan slip berstatus *Draft* (belum disetujui).
-- **Export Excel:** Laporan data gaji dapat diunduh dalam format `.xlsx` menggunakan template standar (`Payroll.xlsx`) yang secara otomatis diisi oleh sistem.
+- **Sistem Pinjaman Terintegrasi:** Pegawai dapat memiliki maksimal 3 pinjaman aktif. Sistem akan **otomatis memotong gaji** setiap bulan hingga sisa hutang lunas.
+- **Validasi QR Publik:** Slip gaji dilengkapi QR Code. Pihak eksternal (seperti Bank) dapat melakukan *scan* untuk memvalidasi keaslian slip gaji tanpa perlu login.
+- **Digital Acknowledgment:** Fitur *"Konfirmasi Terima Gaji"* oleh pegawai yang tercatat hingga hitungan detik (Timestamp) sebagai pengganti tanda tangan basah.
+- **Export Excel Pro:** Export rekap gaji dalam format `.xlsx` menggunakan file `Payroll.xlsx` asli sebagai template, sehingga format desain perusahaan tetap terjaga.
+- **Mobile Responsive:** Antarmuka aplikasi otomatis menyesuaikan dengan layar HP/Tablet (Menu Hamburger & Tabel responsif).
 
-## 📦 Prasyarat
+## 📦 Prasyarat Instalasi
 
 - Docker & Docker Compose
 - Git
 
-## ⚙️ Cara Instalasi
+## ⚙️ Cara Instalasi (Development)
 
-### 1. Persiapan Awal
+1. **Persiapan Awal**
 ```bash
 git clone <repository-url>
 cd aplikasipegawai
 cp .env.example .env
 ```
 
-### 2. Jalankan Container
-Aplikasi ini sudah dipaketkan dalam container, termasuk database PostgreSQL.
+2. **Jalankan Container & Build Image**
 ```bash
 docker-compose up -d --build
 ```
 
-### 3. Install Dependensi & Migrasi Database
-Masuk ke dalam container aplikasi untuk menginstall paket composer dan menjalankan migrasi database:
+3. **Install Dependensi & Migrasi Database**
 ```bash
 docker exec -it aplikasipegawai-app composer install
-docker exec -it aplikasipegawai-app php artisan migrate:fresh
+docker exec -it aplikasipegawai-app php artisan migrate:fresh --seed
 ```
 
----
+Akses aplikasi di: `http://localhost:8000`
 
-## 🛠 Menjalankan Aplikasi
+## 🔑 Akun Login Default (Seeder)
 
-### A. Mode Development (Standar)
-Cocok untuk pengembangan.
+Setelah menjalankan perintah seeder di atas, Anda dapat login menggunakan akun berikut:
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Superadmin** | `admin@payroll.com` | `admin123` |
+| **Staff** | `staff@payroll.com` | `password` |
+| **HRD** | `hrd@payroll.com` | `password` |
+| **Finance**| `finance@payroll.com` | `password` |
+
+*(Catatan: Akun login pegawai dibuat secara otomatis oleh sistem saat Staff mendaftarkan pegawai baru. Password default adalah NIP pegawai).*
+
+## 🚀 Cara Instalasi (Production / Worker Mode)
+
+Untuk *deployment* ke server *production*, gunakan konfigurasi Octane + FrankenPHP untuk performa maksimal:
+
 ```bash
-docker-compose up -d
-```
-Akses: `http://localhost:8000`
-
-### B. Mode Production (Worker Mode)
-Menggunakan **FrankenPHP Worker Mode** via Laravel Octane (Jika dikonfigurasi).
-```bash
+docker-compose -f docker-compose.prod.yml down -v
 docker-compose -f docker-compose.prod.yml up -d --build
+docker exec -it aplikasipegawai-prod-app php artisan migrate --force
 ```
 
----
-
-## 📝 Catatan Penggunaan
-
-- **Template Export Excel:** Jika ingin merubah desain file hasil export, silakan edit file `Payroll.xlsx` di root folder aplikasi. Pastikan baris pertama tetap sebagai header, karena sistem mulai mengisi data dari baris ke-2.
-- **Approval:** Data payroll yang sudah berstatus **Approved** tidak dapat diedit atau dihapus untuk alasan keamanan.
-- **Digital Signature:** Barcode/QR Code pada slip gaji hanya akan muncul pada data yang sudah mendapatkan approval dari HRD. Data yang belum di-approve akan dilabeli sebagai **Belum Disetujui / DRAFT**.
+## 📝 Catatan Integritas Data
+- Jika slip gaji dihapus oleh Staff, sisa hutang pinjaman **tidak akan** bertambah kembali untuk menjaga integritas data akuntansi satu arah.
+- Akun user tidak dapat dihapus, melainkan hanya di-Nonaktifkan (*Deactivate*) oleh Superadmin untuk menjaga histori data *"Approved By"*.
