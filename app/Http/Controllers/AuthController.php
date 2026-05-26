@@ -38,9 +38,11 @@ class AuthController extends Controller
             // Redirect berdasarkan role
             if ($user->role === \App\Models\User::ROLE_SUPERADMIN) {
                 return redirect()->route('users.index');
+            } elseif ($user->role === \App\Models\User::ROLE_PEGAWAI) {
+                return redirect()->intended(route('dashboard'));
             }
 
-            return redirect()->intended('payrolls');
+            return redirect()->intended(route('payrolls.index'));
         }
 
         return back()->withErrors([

@@ -22,13 +22,40 @@ class PayrollController extends Controller
         $this->telegram = $telegram;
     }
 
-    public function getLoanDeduction(Employee $employee)
+    public function getEmployeeComponents(Request $request, Employee $employee)
     {
-        $totalDeduction = $employee->loans()
+        $bulan = $request->query('bulan'); // Format: YYYY-MM
+        
+        // 1. Hitung Potongan Pinjaman Aktif (Total Cicilan)
+        $totalLoanDeduction = $employee->loans()
             ->where('status', \App\Models\Loan::STATUS_APPROVED)
             ->sum('nominal_cicilan');
 
-        return response()->json(['total_deduction' => $totalDeduction]);
+        // 2. Hitung Total Uang PSB di bulan tersebut
+        $totalPsb = 0;
+        if ($bulan) {
+            $totalPsb = \DB::table('employee_psb')
+                ->join('psb_work_orders', 'employee_psb.psb_work_order_id', '=', 'psb_work_orders.id')
+                ->where('employee_psb.employee_id', $employee->id)
+                ->where('psb_work_orders.tanggal_pengerjaan', 'like', $bulan . '%')
+                ->sum('nominal_diterima');
+        }
+
+        // 3. Hitung Total Insentif Tarik Jalur (ITJ) di bulan tersebut
+        $totalItj = 0;
+        if ($bulan) {
+            $totalItj = \DB::table('employee_itj')
+                ->join('itj_work_orders', 'employee_itj.itj_work_order_id', '=', 'itj_work_orders.id')
+                ->where('employee_itj.employee_id', $employee->id)
+                ->where('itj_work_orders.tanggal_pengerjaan', 'like', $bulan . '%')
+                ->sum('nominal_diterima');
+        }
+
+        return response()->json([
+            'loan_deduction' => $totalLoanDeduction,
+            'psb_total' => $totalPsb,
+            'itj_total' => $totalItj
+        ]);
     }
 
     public function index()
@@ -47,7 +74,10 @@ class PayrollController extends Controller
     public function create()
     {
         $employees = Employee::all();
-        return view('payrolls.create', compact('employees'));
+        $defaultBpjsTk = \App\Models\Setting::get('bpjs_ketenagakerjaan_default', 0);
+        $defaultBpjsKes = \App\Models\Setting::get('bpjs_kesehatan_default', 0);
+        
+        return view('payrolls.create', compact('employees', 'defaultBpjsTk', 'defaultBpjsKes'));
     }
 
     public function store(Request $request)

@@ -6,6 +6,10 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\PsbController;
+use App\Http\Controllers\ItjController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -21,6 +25,12 @@ Route::middleware('auth')->group(function () {
     Route::get('password/change', [PasswordController::class, 'edit'])->name('password.change');
     Route::put('password/change', [PasswordController::class, 'update'])->name('password.update');
 
+    // Menu Pengaturan (Khusus HRD & Superadmin)
+    Route::middleware('role:hrd,superadmin')->group(function () {
+        Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
+    });
+
     // Menu Superadmin: Manajemen User Operasional
     Route::middleware('role:superadmin')->group(function () {
         Route::get('users', [UserController::class, 'index'])->name('users.index');
@@ -31,9 +41,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('users/{user}/toggle', [UserController::class, 'toggleStatus'])->name('users.toggle');
     });
 
-    Route::get('/', function () {
-        return redirect()->route('payrolls.index');
-    });
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Menu Pegawai: Hanya Staff dan Finance yang bisa mengelola, HRD hanya bisa lihat
     Route::middleware('role:staff,hrd,finance')->group(function () {
@@ -59,6 +67,22 @@ Route::middleware('auth')->group(function () {
         Route::patch('loans/{loan}/reject', [LoanController::class, 'reject'])->name('loans.reject');
     });
 
+    // Menu PSB (Work Orders)
+    Route::get('psb', [PsbController::class, 'index'])->name('psb.index');
+    Route::middleware('role:staff')->group(function () {
+        Route::get('psb/create', [PsbController::class, 'create'])->name('psb.create');
+        Route::post('psb', [PsbController::class, 'store'])->name('psb.store');
+        Route::delete('psb/{psb}', [PsbController::class, 'destroy'])->name('psb.destroy');
+    });
+
+    // Menu ITJ (Tarik Jalur)
+    Route::get('itj', [ItjController::class, 'index'])->name('itj.index');
+    Route::middleware('role:staff')->group(function () {
+        Route::get('itj/create', [ItjController::class, 'create'])->name('itj.create');
+        Route::post('itj', [ItjController::class, 'store'])->name('itj.store');
+        Route::delete('itj/{itj}', [ItjController::class, 'destroy'])->name('itj.destroy');
+    });
+
     // Menu Payroll (Khusus Staff - Maker)
     Route::middleware('role:staff')->group(function () {
         Route::get('payrolls/create', [PayrollController::class, 'create'])->name('payrolls.create');
@@ -69,7 +93,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Menu Payroll (Umum)
-    Route::get('payrolls/loan-deduction/{employee}', [PayrollController::class, 'getLoanDeduction'])->name('payrolls.loan_deduction');
+    Route::get('payrolls/components/{employee}', [PayrollController::class, 'getEmployeeComponents'])->name('payrolls.components');
     Route::get('payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
     Route::get('payrolls/export-excel', [PayrollController::class, 'exportExcel'])->name('payrolls.export_excel');
     Route::get('payrolls/print-all', [PayrollController::class, 'printAll'])->name('payrolls.print_all');

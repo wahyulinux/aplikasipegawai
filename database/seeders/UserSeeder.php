@@ -11,35 +11,43 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Buat Superadmin (System Administrator)
-        User::create([
-            'name' => 'Super Administrator',
-            'email' => 'admin@payroll.com',
-            'password' => Hash::make('admin123'),
-            'role' => 'superadmin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@payroll.com'],
+            [
+                'name' => 'Super Administrator',
+                'password' => Hash::make('admin123'),
+                'role' => 'superadmin',
+            ]
+        );
 
         // Buat User Staff (Maker)
-        User::create([
-            'name' => 'Staff Penginput',
-            'email' => 'staff@payroll.com',
-            'password' => Hash::make('password'),
-            'role' => 'staff',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'staff@payroll.com'],
+            [
+                'name' => 'Staff Penginput',
+                'password' => Hash::make('password'),
+                'role' => 'staff',
+            ]
+        );
 
         // Buat User HRD (Approver)
-        User::create([
-            'name' => 'HRD Manager',
-            'email' => 'hrd@payroll.com',
-            'password' => Hash::make('password'),
-            'role' => 'hrd',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'hrd@payroll.com'],
+            [
+                'name' => 'HRD Manager',
+                'password' => Hash::make('password'),
+                'role' => 'hrd',
+            ]
+        );
 
         // Buat User Finance (Approver Pinjaman)
-        User::create([
-            'name' => 'Finance Manager',
-            'email' => 'finance@payroll.com',
-            'password' => Hash::make('password'),
-            'role' => 'finance',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'finance@payroll.com'],
+            [
+                'name' => 'Finance Manager',
+                'password' => Hash::make('password'),
+                'role' => 'finance',
+            ]
+        );
     }
 }

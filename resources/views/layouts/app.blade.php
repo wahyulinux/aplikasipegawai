@@ -31,6 +31,13 @@
                             @endif
                             <a href="{{ route('payrolls.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('payrolls.*') ? 'bg-blue-800' : '' }}">Gaji</a>
                             <a href="{{ route('loans.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('loans.*') ? 'bg-blue-800' : '' }}">Pinjaman</a>
+                            @if(Auth::user()->role !== 'pegawai')
+                                <a href="{{ route('psb.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('psb.*') ? 'bg-blue-800' : '' }}">PSB</a>
+                                <a href="{{ route('itj.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('itj.*') ? 'bg-blue-800' : '' }}">ITJ</a>
+                            @endif
+                        @endif
+                        @if(in_array(Auth::user()->role, ['hrd', 'superadmin']))
+                            <a href="{{ route('settings.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('settings.*') ? 'bg-blue-800' : '' }}">Pengaturan</a>
                         @endif
                     </div>
                 </div>
@@ -80,6 +87,13 @@
                     @endif
                     <a href="{{ route('payrolls.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('payrolls.*') ? 'bg-blue-800' : '' }}">Gaji</a>
                     <a href="{{ route('loans.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('loans.*') ? 'bg-blue-800' : '' }}">Pinjaman</a>
+                    @if(Auth::user()->role !== 'pegawai')
+                        <a href="{{ route('psb.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('psb.*') ? 'bg-blue-800' : '' }}">PSB</a>
+                        <a href="{{ route('itj.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('itj.*') ? 'bg-blue-800' : '' }}">ITJ</a>
+                    @endif
+                @endif
+                @if(in_array(Auth::user()->role, ['hrd', 'superadmin']))
+                    <a href="{{ route('settings.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('settings.*') ? 'bg-blue-800' : '' }}">Pengaturan</a>
                 @endif
                 <div class="pt-4 pb-2 border-t border-blue-700">
                     <p class="px-3 text-xs font-bold opacity-75 uppercase">{{ Auth::user()->role }}</p>

@@ -1,0 +1,62 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
+    <h1 class="text-2xl font-bold text-gray-800">Data Work Order Tarik Jalur (ITJ)</h1>
+    @if(Auth::user()->role === 'staff')
+        <a href="{{ route('itj.create') }}" class="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold shadow-md transition text-center">Input WO Baru</a>
+    @endif
+</div>
+
+<div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+    <div class="overflow-x-auto">
+        <table class="min-w-full">
+            <thead class="bg-gray-50 text-gray-600 uppercase text-xs font-bold tracking-wider">
+                <tr>
+                    <th class="py-4 px-6 text-left whitespace-nowrap">Kode WO</th>
+                    <th class="py-4 px-6 text-left whitespace-nowrap">Tanggal</th>
+                    <th class="py-4 px-6 text-left whitespace-nowrap">Pegawai Pelaksana</th>
+                    <th class="py-4 px-6 text-right whitespace-nowrap">Total WO</th>
+                    <th class="py-4 px-6 text-right whitespace-nowrap">Per Orang</th>
+                    @if(Auth::user()->role === 'staff')
+                        <th class="py-4 px-6 text-center whitespace-nowrap">Aksi</th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm">
+                @forelse($workOrders as $wo)
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-4 px-6 font-bold text-blue-600 whitespace-nowrap">{{ $wo->kode_wo }}</td>
+                    <td class="py-4 px-6 whitespace-nowrap">{{ $wo->tanggal_pengerjaan->format('d/m/Y') }}</td>
+                    <td class="py-4 px-6">
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($wo->employees as $emp)
+                                <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-[10px] font-bold border border-gray-200">
+                                    {{ $emp->nama }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-semibold whitespace-nowrap">Rp {{ number_format($wo->nominal_total, 0, ',', '.') }}</td>
+                    <td class="py-4 px-6 text-right font-black text-green-600 whitespace-nowrap">
+                        Rp {{ number_format($wo->employees->first()->pivot->nominal_diterima ?? 0, 0, ',', '.') }}
+                    </td>
+                    @if(Auth::user()->role === 'staff')
+                        <td class="py-4 px-6 text-center whitespace-nowrap">
+                            <form action="{{ route('itj.destroy', $wo->id) }}" method="POST" class="inline">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:underline font-bold" onclick="return confirm('Hapus data WO ini?')">Hapus</button>
+                            </form>
+                        </td>
+                    @endif
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="py-10 text-center text-gray-400 italic">Belum ada data Work Order ITJ.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

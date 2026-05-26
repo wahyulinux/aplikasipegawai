@@ -23,7 +23,7 @@
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Bulan (YYYY-MM)</label>
-                    <input type="month" name="bulan" value="{{ $payroll->bulan }}" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="month" name="bulan" id="bulan_input" value="{{ $payroll->bulan }}" class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
             </div>
 
@@ -48,7 +48,8 @@
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang PSB</label>
-                    <input type="number" step="1" name="uang_psb" value="{{ (int)$payroll->uang_psb }}" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_psb" id="uang_psb" value="{{ (int)$payroll->uang_psb }}" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50 font-bold" readonly>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">*Terisi otomatis dari data Work Order PSB.</p>
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Kerajinan</label>
@@ -60,7 +61,8 @@
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Insentif Narik Jalur</label>
-                    <input type="number" step="1" name="insentif_narik_jalur" value="{{ (int)$payroll->insentif_narik_jalur }}" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="insentif_narik_jalur" id="insentif_narik_jalur" value="{{ (int)$payroll->insentif_narik_jalur }}" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50 font-bold" readonly>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">*Terisi otomatis dari data Work Order ITJ.</p>
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Lembur</label>
@@ -103,17 +105,31 @@
 </div>
 
 <script>
-document.getElementById('employee_select').addEventListener('change', function() {
-    const employeeId = this.value;
+function updateComponents() {
+    const employeeId = document.getElementById('employee_select').value;
+    const bulan = document.getElementById('bulan_input').value;
+
     if (employeeId) {
-        fetch(`/payrolls/loan-deduction/${employeeId}`)
+        let url = `/payrolls/components/${employeeId}`;
+        if (bulan) {
+            url += `?bulan=${bulan}`;
+        }
+
+        fetch(url)
             .then(response => response.json())
             .then(data => {
-                document.getElementById('potongan_pinjaman').value = Math.round(data.total_deduction);
+                document.getElementById('potongan_pinjaman').value = Math.round(data.loan_deduction);
+                document.getElementById('uang_psb').value = Math.round(data.psb_total);
+                document.getElementById('insentif_narik_jalur').value = Math.round(data.itj_total);
             });
     } else {
         document.getElementById('potongan_pinjaman').value = 0;
+        document.getElementById('uang_psb').value = 0;
+        document.getElementById('insentif_narik_jalur').value = 0;
     }
-});
+}
+
+document.getElementById('employee_select').addEventListener('change', updateComponents);
+document.getElementById('bulan_input').addEventListener('change', updateComponents);
 </script>
 @endsection

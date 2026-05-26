@@ -56,8 +56,11 @@ class SocialAuthController extends Controller
 
             if ($user->isSuperadmin()) {
                 return redirect()->route('users.index');
+            } elseif ($user->role === User::ROLE_PEGAWAI) {
+                return redirect()->intended(route('dashboard'));
             }
-            return redirect()->intended('payrolls');
+
+            return redirect()->intended(route('payrolls.index'));
         }
 
         // Jika Google ID tidak ditemukan, cek apakah emailnya terdaftar tapi belum ditautkan
