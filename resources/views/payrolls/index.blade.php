@@ -92,5 +92,8 @@
             </tbody>
         </table>
     </div>
+    @if ($payrolls->hasPages())
+        <div class="mt-4">{{ $payrolls->links() }}</div>
+    @endif
 </div>
 @endsection

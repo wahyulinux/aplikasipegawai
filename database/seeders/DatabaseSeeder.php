@@ -50,5 +50,22 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Potongan default BPJS Kesehatan per bulan',
             ]
         );
+
+        \App\Models\Setting::firstOrCreate(
+            ['key' => 'lembur_nominal_default'],
+            [
+                'value' => '50000',
+                'description' => 'Tarif dasar Lembur (Overtime) per orang per sesi',
+            ]
+        );
+
+        \App\Models\Setting::firstOrCreate(
+            ['key' => 'piket_nominal_default'],
+            [
+                'value' => '75000',
+                'description' => 'Tarif dasar Piket (Standby) per orang per sesi',
+            ]
+        );
+
     }
 }

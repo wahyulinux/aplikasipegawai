@@ -51,10 +51,32 @@ class PayrollController extends Controller
                 ->sum('nominal_diterima');
         }
 
+        // 4. Hitung Total Uang Lembur di bulan tersebut
+        $totalLembur = 0;
+        if ($bulan) {
+            $totalLembur = \DB::table('employee_overtime')
+                ->join('overtimes', 'employee_overtime.overtime_id', '=', 'overtimes.id')
+                ->where('employee_overtime.employee_id', $employee->id)
+                ->where('overtimes.tanggal', 'like', $bulan . '%')
+                ->sum('overtimes.nominal_per_orang');
+        }
+
+        // 5. Hitung Total Uang Piket di bulan tersebut
+        $totalPiket = 0;
+        if ($bulan) {
+            $totalPiket = \DB::table('employee_picket')
+                ->join('pickets', 'employee_picket.picket_id', '=', 'pickets.id')
+                ->where('employee_picket.employee_id', $employee->id)
+                ->where('pickets.tanggal', 'like', $bulan . '%')
+                ->sum('pickets.nominal_per_orang');
+        }
+
         return response()->json([
             'loan_deduction' => $totalLoanDeduction,
             'psb_total' => $totalPsb,
-            'itj_total' => $totalItj
+            'itj_total' => $totalItj,
+            'lembur_total' => $totalLembur,
+            'piket_total' => $totalPiket
         ]);
     }
 
@@ -67,7 +89,7 @@ class PayrollController extends Controller
             $query->where('employee_id', auth()->user()->employee_id);
         }
 
-        $payrolls = $query->get();
+        $payrolls = $query->simplePaginate(50);
         return view('payrolls.index', compact('payrolls'));
     }
 

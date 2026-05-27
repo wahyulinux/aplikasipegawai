@@ -20,7 +20,7 @@ class ItjController extends Controller
 
     public function index()
     {
-        $workOrders = ItjWorkOrder::with('employees')->latest()->get();
+        $workOrders = ItjWorkOrder::with('employees')->latest()->simplePaginate(50);
         return view('itj.index', compact('workOrders'));
     }
 
@@ -104,5 +104,46 @@ class ItjController extends Controller
     {
         $itj->delete();
         return redirect()->route('itj.index')->with('success', 'Data WO Tarik Jalur (ITJ) berhasil dihapus.');
+    }
+
+    public function printReport(Request $request)
+    {
+        $bulan = $request->query('bulan'); // Format: YYYY-MM
+        
+        if (!$bulan) {
+            return back()->with('error', 'Silakan pilih bulan laporan.');
+        }
+
+        $reportData = \DB::table('employee_itj')
+            ->join('itj_work_orders', 'employee_itj.itj_work_order_id', '=', 'itj_work_orders.id')
+            ->join('employees', 'employee_itj.employee_id', '=', 'employees.id')
+            ->select(
+                'employees.nama',
+                'employees.nip',
+                'employees.jabatan',
+                \DB::raw('COUNT(itj_work_orders.id) as total_wo'),
+                \DB::raw('SUM(employee_itj.nominal_diterima) as total_nominal')
+            )
+            ->where('itj_work_orders.tanggal_pengerjaan', 'like', $bulan . '%')
+            ->groupBy('employees.id', 'employees.nama', 'employees.nip', 'employees.jabatan')
+            ->get();
+
+        return view('itj.report', compact('reportData', 'bulan'));
+    }
+
+    public function printDetailReport(Request $request)
+    {
+        $bulan = $request->query('bulan');
+        
+        if (!$bulan) {
+            return back()->with('error', 'Silakan pilih bulan laporan.');
+        }
+
+        $workOrders = ItjWorkOrder::with('employees')
+            ->where('tanggal_pengerjaan', 'like', $bulan . '%')
+            ->orderBy('tanggal_pengerjaan', 'asc')
+            ->get();
+
+        return view('itj.report_detail', compact('workOrders', 'bulan'));
     }
 }

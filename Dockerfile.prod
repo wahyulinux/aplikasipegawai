@@ -32,13 +32,16 @@ COPY . .
 # Install dependencies (production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+RUN composer require laravel/octane
+
 # Set permissions
 RUN mkdir -p storage bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
 
 # Optimization for Production
-RUN php artisan config:cache && \
+RUN php artisan octane:install && \
+    php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
 
@@ -46,7 +49,7 @@ RUN php artisan config:cache && \
 ENV OCTANE_SERVER=frankenphp
 
 # Expose port
-EXPOSE 23381
+EXPOSE 8000
 
 # Start FrankenPHP in Worker Mode using Laravel Octane
-ENTRYPOINT ["php", "artisan", "octane:start", "--server=frankenphp", "--host=0.0.0.0", "--port=80"]
+ENTRYPOINT ["php", "artisan", "octane:start", "--server=frankenphp", "--host=0.0.0.0", "--port=8000"]

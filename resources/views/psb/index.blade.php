@@ -3,9 +3,18 @@
 @section('content')
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
     <h1 class="text-2xl font-bold text-gray-800">Data Work Order PSB</h1>
-    @if(Auth::user()->role === 'staff')
-        <a href="{{ route('psb.create') }}" class="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold shadow-md transition text-center">Input WO Baru</a>
-    @endif
+    <div class="flex flex-col sm:flex-row w-full md:w-auto space-y-2 sm:space-y-0 sm:space-x-2">
+        <form action="{{ route('psb.report') }}" method="GET" class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+            <input type="month" name="bulan" class="rounded border-gray-300 text-sm w-full sm:w-auto" required>
+            <div class="flex space-x-2 w-full sm:w-auto">
+                <button type="submit" class="w-full sm:w-auto bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 text-sm font-bold whitespace-nowrap">Cetak Rekap</button>
+                <button type="submit" formaction="{{ route('psb.report_detail') }}" class="w-full sm:w-auto bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 text-sm font-bold whitespace-nowrap">Cetak Detail WO</button>
+            </div>
+        </form>
+        @if(Auth::user()->role === 'staff')
+            <a href="{{ route('psb.create') }}" class="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold shadow-md transition text-center">Input WO Baru</a>
+        @endif
+    </div>
 </div>
 
 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
@@ -58,5 +67,8 @@
             </tbody>
         </table>
     </div>
+    @if ($workOrders->hasPages())
+        <div class="mt-4">{{ $workOrders->links() }}</div>
+    @endif
 </div>
 @endsection

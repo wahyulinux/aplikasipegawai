@@ -18,7 +18,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
-                        <span class="hidden sm:inline">Payroll App</span>
+                        <span class="hidden sm:inline">SP3DA</span>
                     </a>
                     
                     <!-- Desktop Menu -->
@@ -34,6 +34,8 @@
                             @if(Auth::user()->role !== 'pegawai')
                                 <a href="{{ route('psb.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('psb.*') ? 'bg-blue-800' : '' }}">PSB</a>
                                 <a href="{{ route('itj.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('itj.*') ? 'bg-blue-800' : '' }}">ITJ</a>
+                                <a href="{{ route('overtime.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('overtime.*') ? 'bg-blue-800' : '' }}">Lembur</a>
+                                <a href="{{ route('picket.index') }}" class="px-3 py-2 rounded-md hover:bg-blue-700 transition {{ request()->routeIs('picket.*') ? 'bg-blue-800' : '' }}">Piket</a>
                             @endif
                         @endif
                         @if(in_array(Auth::user()->role, ['hrd', 'superadmin']))
@@ -90,6 +92,8 @@
                     @if(Auth::user()->role !== 'pegawai')
                         <a href="{{ route('psb.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('psb.*') ? 'bg-blue-800' : '' }}">PSB</a>
                         <a href="{{ route('itj.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('itj.*') ? 'bg-blue-800' : '' }}">ITJ</a>
+                        <a href="{{ route('overtime.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('overtime.*') ? 'bg-blue-800' : '' }}">Lembur</a>
+                        <a href="{{ route('picket.index') }}" class="block px-3 py-2 rounded-md hover:bg-blue-700 {{ request()->routeIs('picket.*') ? 'bg-blue-800' : '' }}">Piket</a>
                     @endif
                 @endif
                 @if(in_array(Auth::user()->role, ['hrd', 'superadmin']))

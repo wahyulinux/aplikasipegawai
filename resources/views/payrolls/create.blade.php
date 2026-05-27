@@ -64,11 +64,13 @@
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Lembur</label>
-                    <input type="number" step="1" name="uang_lembur" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_lembur" id="uang_lembur" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50 font-bold" readonly>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">*Terisi otomatis dari data Lembur.</p>
                 </div>
                 <div>
                     <label class="block text-gray-700 text-xs font-bold mb-1">Uang Piket</label>
-                    <input type="number" step="1" name="uang_piket" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" step="1" name="uang_piket" id="uang_piket" value="0" class="w-full px-3 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50 font-bold" readonly>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">*Terisi otomatis dari data Piket.</p>
                 </div>
             </div>
 
@@ -121,11 +123,15 @@ function updateComponents() {
                 document.getElementById('potongan_pinjaman').value = Math.round(data.loan_deduction);
                 document.getElementById('uang_psb').value = Math.round(data.psb_total);
                 document.getElementById('insentif_narik_jalur').value = Math.round(data.itj_total);
+                document.getElementById('uang_lembur').value = Math.round(data.lembur_total);
+                document.getElementById('uang_piket').value = Math.round(data.piket_total);
             });
     } else {
         document.getElementById('potongan_pinjaman').value = 0;
         document.getElementById('uang_psb').value = 0;
         document.getElementById('insentif_narik_jalur').value = 0;
+        document.getElementById('uang_lembur').value = 0;
+        document.getElementById('uang_piket').value = 0;
     }
 }
 

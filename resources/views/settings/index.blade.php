@@ -16,13 +16,13 @@
     <form action="{{ route('settings.update') }}" method="POST" class="space-y-6">
         @csrf
         @method('PUT')
-        
+
         @foreach($settings as $setting)
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">{{ $setting->description }}</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">Rp</span>
-                    <input type="number" name="{{ $setting->key }}" value="{{ (int)$setting->value }}" required 
+                    <input type="number" name="{{ $setting->key }}" value="{{ (int)$setting->value }}" required
                         class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                 </div>
             </div>

@@ -20,27 +20,27 @@ class SettingController extends Controller
             'itj_nominal_default' => 'required|numeric|min:0',
             'bpjs_ketenagakerjaan_default' => 'required|numeric|min:0',
             'bpjs_kesehatan_default' => 'required|numeric|min:0',
+            'lembur_nominal_default' => 'required|numeric|min:0',
+            'piket_nominal_default' => 'required|numeric|min:0',
         ]);
 
         $settingPsb = Setting::where('key', 'psb_nominal_default')->first();
-        if($settingPsb) {
-            $settingPsb->update(['value' => $request->psb_nominal_default]);
-        }
+        if($settingPsb) $settingPsb->update(['value' => $request->psb_nominal_default]);
 
         $settingItj = Setting::where('key', 'itj_nominal_default')->first();
-        if($settingItj) {
-            $settingItj->update(['value' => $request->itj_nominal_default]);
-        }
+        if($settingItj) $settingItj->update(['value' => $request->itj_nominal_default]);
 
         $settingBpjsTk = Setting::where('key', 'bpjs_ketenagakerjaan_default')->first();
-        if($settingBpjsTk) {
-            $settingBpjsTk->update(['value' => $request->bpjs_ketenagakerjaan_default]);
-        }
+        if($settingBpjsTk) $settingBpjsTk->update(['value' => $request->bpjs_ketenagakerjaan_default]);
 
         $settingBpjsKes = Setting::where('key', 'bpjs_kesehatan_default')->first();
-        if($settingBpjsKes) {
-            $settingBpjsKes->update(['value' => $request->bpjs_kesehatan_default]);
-        }
+        if($settingBpjsKes) $settingBpjsKes->update(['value' => $request->bpjs_kesehatan_default]);
+
+        $settingLembur = Setting::where('key', 'lembur_nominal_default')->first();
+        if($settingLembur) $settingLembur->update(['value' => $request->lembur_nominal_default]);
+
+        $settingPiket = Setting::where('key', 'piket_nominal_default')->first();
+        if($settingPiket) $settingPiket->update(['value' => $request->piket_nominal_default]);
 
         return back()->with('success', 'Pengaturan berhasil diperbarui.');
     }

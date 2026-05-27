@@ -25,7 +25,7 @@ class LoanController extends Controller
             $query->where('employee_id', Auth::user()->employee_id);
         }
 
-        $loans = $query->get();
+        $loans = $query->simplePaginate(50);
         return view('loans.index', compact('loans'));
     }
 

@@ -20,7 +20,7 @@ class PsbController extends Controller
 
     public function index()
     {
-        $workOrders = PsbWorkOrder::with('employees')->latest()->get();
+        $workOrders = PsbWorkOrder::with('employees')->latest()->simplePaginate(50);
         return view('psb.index', compact('workOrders'));
     }
 
@@ -104,5 +104,46 @@ class PsbController extends Controller
     {
         $psb->delete();
         return redirect()->route('psb.index')->with('success', 'Data WO PSB berhasil dihapus.');
+    }
+
+    public function printReport(Request $request)
+    {
+        $bulan = $request->query('bulan'); // Format: YYYY-MM
+        
+        if (!$bulan) {
+            return back()->with('error', 'Silakan pilih bulan laporan.');
+        }
+
+        $reportData = \DB::table('employee_psb')
+            ->join('psb_work_orders', 'employee_psb.psb_work_order_id', '=', 'psb_work_orders.id')
+            ->join('employees', 'employee_psb.employee_id', '=', 'employees.id')
+            ->select(
+                'employees.nama',
+                'employees.nip',
+                'employees.jabatan',
+                \DB::raw('COUNT(psb_work_orders.id) as total_wo'),
+                \DB::raw('SUM(employee_psb.nominal_diterima) as total_nominal')
+            )
+            ->where('psb_work_orders.tanggal_pengerjaan', 'like', $bulan . '%')
+            ->groupBy('employees.id', 'employees.nama', 'employees.nip', 'employees.jabatan')
+            ->get();
+
+        return view('psb.report', compact('reportData', 'bulan'));
+    }
+
+    public function printDetailReport(Request $request)
+    {
+        $bulan = $request->query('bulan');
+        
+        if (!$bulan) {
+            return back()->with('error', 'Silakan pilih bulan laporan.');
+        }
+
+        $workOrders = PsbWorkOrder::with('employees')
+            ->where('tanggal_pengerjaan', 'like', $bulan . '%')
+            ->orderBy('tanggal_pengerjaan', 'asc')
+            ->get();
+
+        return view('psb.report_detail', compact('workOrders', 'bulan'));
     }
 }

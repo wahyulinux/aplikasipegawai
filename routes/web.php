@@ -8,6 +8,8 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PsbController;
 use App\Http\Controllers\ItjController;
+use App\Http\Controllers\OvertimeController;
+use App\Http\Controllers\PicketController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +70,8 @@ Route::middleware('auth')->group(function () {
     });
 
     // Menu PSB (Work Orders)
+    Route::get('psb/report', [PsbController::class, 'printReport'])->name('psb.report');
+    Route::get('psb/report-detail', [PsbController::class, 'printDetailReport'])->name('psb.report_detail');
     Route::get('psb', [PsbController::class, 'index'])->name('psb.index');
     Route::middleware('role:staff')->group(function () {
         Route::get('psb/create', [PsbController::class, 'create'])->name('psb.create');
@@ -76,11 +80,33 @@ Route::middleware('auth')->group(function () {
     });
 
     // Menu ITJ (Tarik Jalur)
+    Route::get('itj/report', [ItjController::class, 'printReport'])->name('itj.report');
+    Route::get('itj/report-detail', [ItjController::class, 'printDetailReport'])->name('itj.report_detail');
     Route::get('itj', [ItjController::class, 'index'])->name('itj.index');
     Route::middleware('role:staff')->group(function () {
         Route::get('itj/create', [ItjController::class, 'create'])->name('itj.create');
         Route::post('itj', [ItjController::class, 'store'])->name('itj.store');
         Route::delete('itj/{itj}', [ItjController::class, 'destroy'])->name('itj.destroy');
+    });
+
+    // Menu Lembur (Overtime)
+    Route::get('overtime/report', [OvertimeController::class, 'printReport'])->name('overtime.report');
+    Route::get('overtime/report-detail', [OvertimeController::class, 'printDetailReport'])->name('overtime.report_detail');
+    Route::get('overtime', [OvertimeController::class, 'index'])->name('overtime.index');
+    Route::middleware('role:staff')->group(function () {
+        Route::get('overtime/create', [OvertimeController::class, 'create'])->name('overtime.create');
+        Route::post('overtime', [OvertimeController::class, 'store'])->name('overtime.store');
+        Route::delete('overtime/{overtime}', [OvertimeController::class, 'destroy'])->name('overtime.destroy');
+    });
+
+    // Menu Piket (Standby)
+    Route::get('picket/report', [PicketController::class, 'printReport'])->name('picket.report');
+    Route::get('picket/report-detail', [PicketController::class, 'printDetailReport'])->name('picket.report_detail');
+    Route::get('picket', [PicketController::class, 'index'])->name('picket.index');
+    Route::middleware('role:staff')->group(function () {
+        Route::get('picket/create', [PicketController::class, 'create'])->name('picket.create');
+        Route::post('picket', [PicketController::class, 'store'])->name('picket.store');
+        Route::delete('picket/{picket}', [PicketController::class, 'destroy'])->name('picket.destroy');
     });
 
     // Menu Payroll (Khusus Staff - Maker)

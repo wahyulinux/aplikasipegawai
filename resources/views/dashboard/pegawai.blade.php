@@ -22,6 +22,34 @@
         </div>
     </div>
 
+    <!-- Card Lembur -->
+    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg transform hover:-translate-y-1 transition duration-300">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-indigo-100 font-bold tracking-wider uppercase text-xs">Pendapatan Lembur</h3>
+            <svg class="w-8 h-8 text-indigo-200 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <p class="text-3xl font-black mb-1">Rp {{ number_format($totalLemburBulanIni, 0, ',', '.') }}</p>
+        <p class="text-xs text-indigo-100 italic">Bulan Ini</p>
+        <div class="mt-4 pt-4 border-t border-indigo-400 border-opacity-50 text-sm font-medium">
+            <span class="block">Jumlah Sesi Lembur:</span>
+            <span class="block text-lg font-bold">{{ $jumlahLemburBulanIni }}x Kehadiran</span>
+        </div>
+    </div>
+
+    <!-- Card Piket -->
+    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg transform hover:-translate-y-1 transition duration-300">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-purple-100 font-bold tracking-wider uppercase text-xs">Pendapatan Piket</h3>
+            <svg class="w-8 h-8 text-purple-200 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        </div>
+        <p class="text-3xl font-black mb-1">Rp {{ number_format($totalPiketBulanIni, 0, ',', '.') }}</p>
+        <p class="text-xs text-purple-100 italic">Bulan Ini</p>
+        <div class="mt-4 pt-4 border-t border-purple-400 border-opacity-50 text-sm font-medium">
+            <span class="block">Jumlah Sesi Piket:</span>
+            <span class="block text-lg font-bold">{{ $jumlahPiketBulanIni }}x Kehadiran</span>
+        </div>
+    </div>
+
     <!-- Card Sisa Hutang -->
     <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-6 text-white shadow-lg transform hover:-translate-y-1 transition duration-300">
         <div class="flex justify-between items-center mb-4">

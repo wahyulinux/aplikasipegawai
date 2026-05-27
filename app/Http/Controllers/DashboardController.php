@@ -44,14 +44,44 @@ class DashboardController extends Controller
             ->where('itj_work_orders.tanggal_pengerjaan', 'like', $currentMonth . '%')
             ->sum('nominal_diterima');
 
+        // 4. Ambil Penghasilan Lembur Bulan Ini
+        $totalLemburBulanIni = DB::table('employee_overtime')
+            ->join('overtimes', 'employee_overtime.overtime_id', '=', 'overtimes.id')
+            ->where('employee_overtime.employee_id', $employeeId)
+            ->where('overtimes.tanggal', 'like', $currentMonth . '%')
+            ->sum('overtimes.nominal_per_orang');
+
+        $jumlahLemburBulanIni = DB::table('employee_overtime')
+            ->join('overtimes', 'employee_overtime.overtime_id', '=', 'overtimes.id')
+            ->where('employee_overtime.employee_id', $employeeId)
+            ->where('overtimes.tanggal', 'like', $currentMonth . '%')
+            ->count();
+
+        // 5. Ambil Penghasilan Piket Bulan Ini
+        $totalPiketBulanIni = DB::table('employee_picket')
+            ->join('pickets', 'employee_picket.picket_id', '=', 'pickets.id')
+            ->where('employee_picket.employee_id', $employeeId)
+            ->where('pickets.tanggal', 'like', $currentMonth . '%')
+            ->sum('pickets.nominal_per_orang');
+
+        $jumlahPiketBulanIni = DB::table('employee_picket')
+            ->join('pickets', 'employee_picket.picket_id', '=', 'pickets.id')
+            ->where('employee_picket.employee_id', $employeeId)
+            ->where('pickets.tanggal', 'like', $currentMonth . '%')
+            ->count();
+
         $totalWoBulanIni = $totalPsbBulanIni + $totalItjBulanIni;
 
         return view('dashboard.pegawai', compact(
-            'activeLoans', 
-            'totalSisaHutang', 
-            'totalCicilanBulanIni', 
-            'totalPsbBulanIni', 
-            'totalItjBulanIni', 
+            'activeLoans',
+            'totalSisaHutang',
+            'totalCicilanBulanIni',
+            'totalPsbBulanIni',
+            'totalItjBulanIni',
+            'totalLemburBulanIni',
+            'jumlahLemburBulanIni',
+            'totalPiketBulanIni',
+            'jumlahPiketBulanIni',
             'totalWoBulanIni',
             'currentMonth'
         ));
